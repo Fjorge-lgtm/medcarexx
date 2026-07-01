@@ -19,4 +19,7 @@ class MedicineModel {
   String dosage = '';
   List<DateTime> scheduleTimes = [];
   bool isActive = true;
+
+  @Index()
+  int? userId;
 }

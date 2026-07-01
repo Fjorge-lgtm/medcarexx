@@ -31,8 +31,8 @@ class IsarService {
     await _db.writeTxn(() => _db.userModels.put(user));
   }
 
-  Future<List<MedicineModel>> getAllMedicines() async {
-    return _db.medicineModels.where().findAll();
+  Future<List<MedicineModel>> getAllMedicines(int userId) async {
+    return _db.medicineModels.filter().userIdEqualTo(userId).findAll();
   }
 
   Future<int> saveMedicine(MedicineModel medicine) async {

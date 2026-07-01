@@ -11,6 +11,7 @@ class HomeView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final medicines = ref.watch(medicineListProvider);
+    final user = ref.watch(userProvider).asData?.value;
     final now = DateTime.now();
     final hour = now.hour;
 
@@ -44,7 +45,9 @@ class HomeView extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '$greeting! 👋',
+                            user != null && user.name.isNotEmpty
+                                ? '$greeting, ${user.name}! 👋'
+                                : '$greeting! 👋',
                             style: const TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 14,

@@ -614,6 +614,11 @@ const MedicineModelSchema = CollectionSchema(
       id: 3,
       name: r'scheduleTimes',
       type: IsarType.dateTimeList,
+    ),
+    r'userId': PropertySchema(
+      id: 4,
+      name: r'userId',
+      type: IsarType.long,
     )
   },
   estimateSize: _medicineModelEstimateSize,
@@ -621,7 +626,21 @@ const MedicineModelSchema = CollectionSchema(
   deserialize: _medicineModelDeserialize,
   deserializeProp: _medicineModelDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'userId': IndexSchema(
+      id: -2005826577402374815,
+      name: r'userId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'userId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _medicineModelGetId,
@@ -652,6 +671,7 @@ void _medicineModelSerialize(
   writer.writeBool(offsets[1], object.isActive);
   writer.writeString(offsets[2], object.name);
   writer.writeDateTimeList(offsets[3], object.scheduleTimes);
+  writer.writeLong(offsets[4], object.userId);
 }
 
 MedicineModel _medicineModelDeserialize(
@@ -666,6 +686,7 @@ MedicineModel _medicineModelDeserialize(
   object.isActive = reader.readBool(offsets[1]);
   object.name = reader.readString(offsets[2]);
   object.scheduleTimes = reader.readDateTimeList(offsets[3]) ?? [];
+  object.userId = reader.readLongOrNull(offsets[4]);
   return object;
 }
 
@@ -684,6 +705,8 @@ P _medicineModelDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 3:
       return (reader.readDateTimeList(offset) ?? []) as P;
+    case 4:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -707,6 +730,14 @@ extension MedicineModelQueryWhereSort
   QueryBuilder<MedicineModel, MedicineModel, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterWhere> anyUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'userId'),
+      );
     });
   }
 }
@@ -777,6 +808,118 @@ extension MedicineModelQueryWhere
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterWhereClause> userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'userId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterWhereClause>
+      userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'userId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterWhereClause> userIdEqualTo(
+      int? userId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'userId',
+        value: [userId],
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterWhereClause>
+      userIdNotEqualTo(int? userId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'userId',
+              lower: [],
+              upper: [userId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'userId',
+              lower: [userId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'userId',
+              lower: [userId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'userId',
+              lower: [],
+              upper: [userId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterWhereClause>
+      userIdGreaterThan(
+    int? userId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'userId',
+        lower: [userId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterWhereClause> userIdLessThan(
+    int? userId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'userId',
+        lower: [],
+        upper: [userId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterWhereClause> userIdBetween(
+    int? lowerUserId,
+    int? upperUserId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'userId',
+        lower: [lowerUserId],
+        includeLower: includeLower,
+        upper: [upperUserId],
         includeUpper: includeUpper,
       ));
     });
@@ -1264,6 +1407,80 @@ extension MedicineModelQueryFilter
       );
     });
   }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterFilterCondition>
+      userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterFilterCondition>
+      userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterFilterCondition>
+      userIdEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterFilterCondition>
+      userIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'userId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterFilterCondition>
+      userIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'userId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterFilterCondition>
+      userIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'userId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension MedicineModelQueryObject
@@ -1308,6 +1525,18 @@ extension MedicineModelQuerySortBy
   QueryBuilder<MedicineModel, MedicineModel, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterSortBy> sortByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterSortBy> sortByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
     });
   }
 }
@@ -1362,6 +1591,18 @@ extension MedicineModelQuerySortThenBy
       return query.addSortBy(r'name', Sort.desc);
     });
   }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterSortBy> thenByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QAfterSortBy> thenByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
+    });
+  }
 }
 
 extension MedicineModelQueryWhereDistinct
@@ -1390,6 +1631,12 @@ extension MedicineModelQueryWhereDistinct
       distinctByScheduleTimes() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'scheduleTimes');
+    });
+  }
+
+  QueryBuilder<MedicineModel, MedicineModel, QDistinct> distinctByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'userId');
     });
   }
 }
@@ -1424,6 +1671,12 @@ extension MedicineModelQueryProperty
       scheduleTimesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scheduleTimes');
+    });
+  }
+
+  QueryBuilder<MedicineModel, int?, QQueryOperations> userIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'userId');
     });
   }
 }
