@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/auth_service.dart';
 import '../../core/notification_service.dart';
 import '../../data/datasources/isar_service.dart';
 import '../../data/models/models.dart';
@@ -12,8 +13,14 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   return NotificationService();
 });
 
-final userProvider = FutureProvider<UserModel?>((ref) {
-  return ref.read(isarServiceProvider).getUser();
+final authServiceProvider = Provider<AuthService>((ref) {
+  throw UnimplementedError('authServiceProvider must be overridden in main()');
+});
+
+final userProvider = FutureProvider<UserModel?>((ref) async {
+  final userId = await ref.read(authServiceProvider).getActiveUserId();
+  if (userId == null) return null;
+  return ref.read(isarServiceProvider).getUserById(userId);
 });
 
 final medicineListProvider =

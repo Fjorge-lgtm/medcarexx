@@ -36,8 +36,9 @@ class _RegisterViewState extends State<RegisterView> {
       ..biometricEnabled = true;
 
     await _isar.init();
-    await _isar.saveUser(user);
+    final userId = await _isar.saveUser(user);
     await _auth.savePin(_pinController.text);
+    await _auth.setActiveUserId(userId);
 
     if (mounted) {
       Navigator.pushReplacement(

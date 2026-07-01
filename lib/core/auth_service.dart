@@ -6,6 +6,7 @@ import 'package:local_auth/local_auth.dart';
 
 class AuthService {
   static const _pinKey = 'medcare_pin_hash';
+  static const _activeUserIdKey = 'medcare_active_user_id';
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final LocalAuthentication _localAuth = LocalAuthentication();
@@ -19,6 +20,15 @@ class AuthService {
 
   Future<void> savePin(String pin) async {
     await _storage.write(key: _pinKey, value: _hash(pin));
+  }
+
+  Future<int?> getActiveUserId() async {
+    final value = await _storage.read(key: _activeUserIdKey);
+    return value != null ? int.tryParse(value) : null;
+  }
+
+  Future<void> setActiveUserId(int id) async {
+    await _storage.write(key: _activeUserIdKey, value: id.toString());
   }
 
   Future<bool> verifyPin(String pin) async {

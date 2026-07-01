@@ -26,13 +26,25 @@ void main() async {
 
   final authService = AuthService();
   final hasPin = await authService.hasPin();
-  final user   = await isarService.getUser();
+
+  final activeUserId = await authService.getActiveUserId();
+  var user = activeUserId != null
+      ? await isarService.getUserById(activeUserId)
+      : null;
+
+  // Instalações anteriores a este recurso não têm um usuário ativo salvo:
+  // adota o primeiro usuário cadastrado como ativo para não perder o acesso.
+  if (user == null && hasPin) {
+    user = await isarService.getUser();
+    if (user != null) await authService.setActiveUserId(user.id);
+  }
 
   runApp(
     ProviderScope(
       overrides: [
         isarServiceProvider.overrideWithValue(isarService),
         notificationServiceProvider.overrideWithValue(notificationService),
+        authServiceProvider.overrideWithValue(authService),
       ],
       child: MyApp(startWithLogin: hasPin && user != null),
     ),
