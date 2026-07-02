@@ -45,6 +45,7 @@ dependencies:
   timezone: ^0.9.4
   flutter_timezone: ^3.0.1
   crypto: ^3.0.6
+  alarm: ^5.4.1
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/sounds/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

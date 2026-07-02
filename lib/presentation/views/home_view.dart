@@ -4,6 +4,7 @@ import '../../core/theme.dart';
 import '../providers/medicine_provider.dart';
 import 'login_view.dart';
 import 'add_medicine_view.dart';
+import 'alarm_list_view.dart';
 
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
@@ -63,6 +64,30 @@ class HomeView extends ConsumerWidget {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    // Despertador — módulo separado dos lembretes de remédio
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const AlarmListView()),
+                      ),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        margin: const EdgeInsets.only(right: 12),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.surfaceCard,
+                          border: Border.all(
+                            color: AppColors.cyanVibrant.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.alarm_rounded,
+                          color: AppColors.cyanVibrant,
+                          size: 22,
+                        ),
                       ),
                     ),
                     // Avatar / logout

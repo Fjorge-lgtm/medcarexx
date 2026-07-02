@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/auth_service.dart';
 import '../../core/notification_service.dart';
 import '../../data/datasources/isar_service.dart';
 import '../../data/models/models.dart';
@@ -13,12 +12,13 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   return NotificationService();
 });
 
-final authServiceProvider = Provider<AuthService>((ref) {
-  throw UnimplementedError('authServiceProvider must be overridden in main()');
-});
+/// Id do usuário atualmente ativo na sessão. Atualizado em memória
+/// (via [StateProvider]) sempre que um novo usuário é registrado, para que
+/// a troca de conta seja refletida imediatamente sem exigir reiniciar o app.
+final activeUserIdProvider = StateProvider<int?>((ref) => null);
 
-final userProvider = FutureProvider<UserModel?>((ref) async {
-  final userId = await ref.read(authServiceProvider).getActiveUserId();
+final userProvider = FutureProvider<UserModel?>((ref) {
+  final userId = ref.watch(activeUserIdProvider);
   if (userId == null) return null;
   return ref.read(isarServiceProvider).getUserById(userId);
 });

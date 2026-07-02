@@ -10,7 +10,7 @@ class IsarService {
     if (_isar != null) return;
     final dir = await getApplicationDocumentsDirectory();
     _isar = await Isar.open(
-      [UserModelSchema, MedicineModelSchema],
+      [UserModelSchema, MedicineModelSchema, AlarmModelSchema],
       directory: dir.path,
     );
   }
@@ -45,5 +45,21 @@ class IsarService {
 
   Future<void> deleteMedicine(int id) async {
     await _db.writeTxn(() => _db.medicineModels.delete(id));
+  }
+
+  Future<List<AlarmModel>> getAllAlarms(int userId) async {
+    return _db.alarmModels.filter().userIdEqualTo(userId).findAll();
+  }
+
+  Future<AlarmModel?> getAlarmById(int id) async {
+    return _db.alarmModels.get(id);
+  }
+
+  Future<int> saveAlarm(AlarmModel alarm) async {
+    return _db.writeTxn(() => _db.alarmModels.put(alarm));
+  }
+
+  Future<void> deleteAlarm(int id) async {
+    await _db.writeTxn(() => _db.alarmModels.delete(id));
   }
 }

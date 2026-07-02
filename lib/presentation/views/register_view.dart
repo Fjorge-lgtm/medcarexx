@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/auth_service.dart';
 import '../../core/theme.dart';
 import '../../data/models/models.dart';
 import '../../data/datasources/isar_service.dart';
+import '../providers/medicine_provider.dart';
 import 'home_view.dart';
 
-class RegisterView extends StatefulWidget {
+class RegisterView extends ConsumerStatefulWidget {
   const RegisterView({super.key});
 
   @override
-  State<RegisterView> createState() => _RegisterViewState();
+  ConsumerState<RegisterView> createState() => _RegisterViewState();
 }
 
-class _RegisterViewState extends State<RegisterView> {
+class _RegisterViewState extends ConsumerState<RegisterView> {
   final _nameController = TextEditingController();
   final _pinController   = TextEditingController();
   final AuthService _auth = AuthService();
@@ -39,6 +41,7 @@ class _RegisterViewState extends State<RegisterView> {
     final userId = await _isar.saveUser(user);
     await _auth.savePin(_pinController.text);
     await _auth.setActiveUserId(userId);
+    ref.read(activeUserIdProvider.notifier).state = userId;
 
     if (mounted) {
       Navigator.pushReplacement(

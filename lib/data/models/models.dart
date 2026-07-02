@@ -23,3 +23,20 @@ class MedicineModel {
   @Index()
   int? userId;
 }
+
+@collection
+class AlarmModel {
+  Id id = Isar.autoIncrement;
+
+  late String label;
+  late int hour;
+  late int minute;
+
+  /// Dias da semana em que o alarme repete (1=segunda .. 7=domingo,
+  /// convenção de [DateTime.weekday]). Vazio significa alarme único.
+  List<int> repeatDays = [];
+  bool isEnabled = true;
+
+  @Index()
+  int? userId;
+}
