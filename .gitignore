@@ -4,6 +4,10 @@
 *.pyc
 *.swp
 .DS_Store
+._*
+* - Copia
+*-Copia*
+.claude/
 .atom/
 .build/
 .buildlog/
